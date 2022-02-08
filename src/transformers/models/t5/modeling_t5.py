@@ -1757,7 +1757,7 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
         self.no_of_lm_heads = 4
         self.lm_heads = []
         for i in range(self.no_of_lm_heads):
-            self.lm_heads[i] = nn.Linear(config.d_model, config.vocab_size, bias=False)
+            self.lm_heads.append(nn.Linear(config.d_model, config.vocab_size, bias=False))
         self.current_lm_head_idx = 0
 
         # Initialize weights and apply final processing
