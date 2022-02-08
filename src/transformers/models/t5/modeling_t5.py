@@ -1720,7 +1720,7 @@ class T5ForConditionalGeneration(T5PreTrainedModel):
             reordered_decoder_past = reordered_decoder_past + (reordered_layer_past_states,)
         return reordered_decoder_past
 
-@add_start_docstrings("""T5 Model with a `language modeling` head on top.""", T5_START_DOCSTRING)
+@add_start_docstrings("""T5 Model with `multiple language modeling` heads on top.""", T5_START_DOCSTRING)
 class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
     _keys_to_ignore_on_load_missing = [
         r"encoder\.embed_tokens\.weight",
