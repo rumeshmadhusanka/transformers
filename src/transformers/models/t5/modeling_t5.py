@@ -1725,6 +1725,7 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
     _keys_to_ignore_on_load_missing = [
         r"encoder\.embed_tokens\.weight",
         r"decoder\.embed_tokens\.weight",
+        r"lm_head\.weight",
         r"lm_heads[0]\.weight",
         r"lm_heads[1]\.weight",
         r"lm_heads[2]\.weight",
