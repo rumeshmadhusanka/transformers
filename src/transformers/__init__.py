@@ -1874,7 +1874,7 @@ if is_tf_available():
         ]
     )
     _import_structure["models.mt5"].extend(["TFMT5EncoderModel", "TFMT5ForConditionalGeneration",
-                                            "MT5ForConditionalGenerationWithMultipleHeads", "TFMT5Model"])
+                                            "TFMT5Model"])
     _import_structure["models.openai"].extend(
         [
             "TF_OPENAI_GPT_PRETRAINED_MODEL_ARCHIVE_LIST",
@@ -3790,7 +3790,7 @@ if TYPE_CHECKING:
             TFMPNetModel,
             TFMPNetPreTrainedModel,
         )
-        from .models.mt5 import TFMT5EncoderModel, TFMT5ForConditionalGeneration, T5WithMultiDecoders, TFMT5Model
+        from .models.mt5 import TFMT5EncoderModel, TFMT5ForConditionalGeneration, TFMT5Model
         from .models.openai import (
             TF_OPENAI_GPT_PRETRAINED_MODEL_ARCHIVE_LIST,
             TFOpenAIGPTDoubleHeadsModel,
