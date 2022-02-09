@@ -117,6 +117,10 @@ class MT5ForConditionalGenerationWithMultipleHeads(T5ForConditionalGenerationWit
     config_class = MT5Config
     _keys_to_ignore_on_load_missing = [
         r"encoder\.embed_tokens\.weight",
+        r"lm_head0\.weight",
+        r"lm_head1\.weight",
+        r"lm_head2\.weight",
+        r"lm_head3\.weight",
     ]
     _keys_to_ignore_on_save = [
         r"encoder\.embed_tokens\.weight",

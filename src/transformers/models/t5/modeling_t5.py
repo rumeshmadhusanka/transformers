@@ -14,7 +14,6 @@
 # limitations under the License.
 """ PyTorch T5 model."""
 
-
 import copy
 import math
 import os
@@ -44,7 +43,6 @@ from ...modeling_utils import PreTrainedModel, find_pruneable_heads_and_indices,
 from ...utils import logging
 from ...utils.model_parallel_utils import assert_device_map, get_device_map
 from .configuration_t5 import T5Config
-
 
 logger = logging.get_logger(__name__)
 
@@ -100,8 +98,8 @@ def load_tf_weights_in_t5(model, config, tf_checkpoint_path):
         # adam_v and adam_m are variables used in AdamWeightDecayOptimizer to calculated m and v
         # which are not required for using pretrained model
         if any(
-            n in ["adam_v", "adam_m", "AdamWeightDecayOptimizer", "AdamWeightDecayOptimizer_1", "global_step"]
-            for n in name
+                n in ["adam_v", "adam_m", "AdamWeightDecayOptimizer", "AdamWeightDecayOptimizer_1", "global_step"]
+                for n in name
         ):
             logger.info(f"Skipping {'/'.join(name)}")
             tf_weights.pop(txt_name, None)
@@ -163,7 +161,7 @@ def load_tf_weights_in_t5(model, config, tf_checkpoint_path):
             array = np.transpose(array)
         try:
             assert (
-                pointer.shape == array.shape
+                    pointer.shape == array.shape
             ), f"Pointer shape {pointer.shape} and array shape {array.shape} mismatched"
         except AssertionError as e:
             e.args += (pointer.shape, array.shape)
@@ -387,9 +385,9 @@ class T5Attention(nn.Module):
 
         # The other half of the buckets are for logarithmically bigger bins in positions up to max_distance
         relative_postion_if_large = max_exact + (
-            torch.log(relative_position.float() / max_exact)
-            / math.log(max_distance / max_exact)
-            * (num_buckets - max_exact)
+                torch.log(relative_position.float() / max_exact)
+                / math.log(max_distance / max_exact)
+                * (num_buckets - max_exact)
         ).to(torch.long)
         relative_postion_if_large = torch.min(
             relative_postion_if_large, torch.full_like(relative_postion_if_large, num_buckets - 1)
@@ -417,16 +415,16 @@ class T5Attention(nn.Module):
         return values
 
     def forward(
-        self,
-        hidden_states,
-        mask=None,
-        key_value_states=None,
-        position_bias=None,
-        past_key_value=None,
-        layer_head_mask=None,
-        query_length=None,
-        use_cache=False,
-        output_attentions=False,
+            self,
+            hidden_states,
+            mask=None,
+            key_value_states=None,
+            position_bias=None,
+            past_key_value=None,
+            layer_head_mask=None,
+            query_length=None,
+            use_cache=False,
+            output_attentions=False,
     ):
         """
         Self-attention (if key_value_states is None) or attention over source sentence (provided by key_value_states).
@@ -440,8 +438,8 @@ class T5Attention(nn.Module):
 
         if past_key_value is not None:
             assert (
-                len(past_key_value) == 2
-            ), f"past_key_value should have 2 past states: keys and values. Got { len(past_key_value)} past states"
+                    len(past_key_value) == 2
+            ), f"past_key_value should have 2 past states: keys and values. Got {len(past_key_value)} past states"
             real_seq_length += past_key_value[0].shape[2] if query_length is None else query_length
 
         key_length = real_seq_length if key_value_states is None else key_value_states.shape[1]
@@ -504,7 +502,7 @@ class T5Attention(nn.Module):
             # if key and values are already calculated
             # we want only the last query position bias
             if past_key_value is not None:
-                position_bias = position_bias[:, :, -hidden_states.size(1) :, :]
+                position_bias = position_bias[:, :, -hidden_states.size(1):, :]
 
             if mask is not None:
                 position_bias = position_bias + mask  # (batch_size, n_heads, seq_length, key_length)
@@ -540,14 +538,14 @@ class T5LayerSelfAttention(nn.Module):
         self.dropout = nn.Dropout(config.dropout_rate)
 
     def forward(
-        self,
-        hidden_states,
-        attention_mask=None,
-        position_bias=None,
-        layer_head_mask=None,
-        past_key_value=None,
-        use_cache=False,
-        output_attentions=False,
+            self,
+            hidden_states,
+            attention_mask=None,
+            position_bias=None,
+            layer_head_mask=None,
+            past_key_value=None,
+            use_cache=False,
+            output_attentions=False,
     ):
         normed_hidden_states = self.layer_norm(hidden_states)
         attention_output = self.SelfAttention(
@@ -572,16 +570,16 @@ class T5LayerCrossAttention(nn.Module):
         self.dropout = nn.Dropout(config.dropout_rate)
 
     def forward(
-        self,
-        hidden_states,
-        key_value_states,
-        attention_mask=None,
-        position_bias=None,
-        layer_head_mask=None,
-        past_key_value=None,
-        use_cache=False,
-        query_length=None,
-        output_attentions=False,
+            self,
+            hidden_states,
+            key_value_states,
+            attention_mask=None,
+            position_bias=None,
+            layer_head_mask=None,
+            past_key_value=None,
+            use_cache=False,
+            query_length=None,
+            output_attentions=False,
     ):
         normed_hidden_states = self.layer_norm(hidden_states)
         attention_output = self.EncDecAttention(
@@ -612,19 +610,19 @@ class T5Block(nn.Module):
         self.layer.append(T5LayerFF(config))
 
     def forward(
-        self,
-        hidden_states,
-        attention_mask=None,
-        position_bias=None,
-        encoder_hidden_states=None,
-        encoder_attention_mask=None,
-        encoder_decoder_position_bias=None,
-        layer_head_mask=None,
-        cross_attn_layer_head_mask=None,
-        past_key_value=None,
-        use_cache=False,
-        output_attentions=False,
-        return_dict=True,
+            self,
+            hidden_states,
+            attention_mask=None,
+            position_bias=None,
+            encoder_hidden_states=None,
+            encoder_attention_mask=None,
+            encoder_decoder_position_bias=None,
+            layer_head_mask=None,
+            cross_attn_layer_head_mask=None,
+            past_key_value=None,
+            use_cache=False,
+            output_attentions=False,
+            return_dict=True,
     ):
 
         if past_key_value is not None:
@@ -786,7 +784,7 @@ class T5PreTrainedModel(PreTrainedModel):
         pad_token_id = self.config.pad_token_id
 
         assert (
-            decoder_start_token_id is not None
+                decoder_start_token_id is not None
         ), "self.model.config.decoder_start_token_id has to be defined. In T5 it is usually set to the pad_token_id. See T5 docs for more information"
 
         # shift inputs to the right
@@ -868,19 +866,19 @@ class T5Stack(T5PreTrainedModel):
         self.embed_tokens = new_embeddings
 
     def forward(
-        self,
-        input_ids=None,
-        attention_mask=None,
-        encoder_hidden_states=None,
-        encoder_attention_mask=None,
-        inputs_embeds=None,
-        head_mask=None,
-        cross_attn_head_mask=None,
-        past_key_values=None,
-        use_cache=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
+            self,
+            input_ids=None,
+            attention_mask=None,
+            encoder_hidden_states=None,
+            encoder_attention_mask=None,
+            inputs_embeds=None,
+            head_mask=None,
+            cross_attn_head_mask=None,
+            past_key_values=None,
+            use_cache=None,
+            output_attentions=None,
+            output_hidden_states=None,
+            return_dict=None,
     ):
         # Model parallel
         if self.model_parallel:
@@ -1321,22 +1319,22 @@ class T5Model(T5PreTrainedModel):
     @add_start_docstrings_to_model_forward(T5_INPUTS_DOCSTRING)
     @replace_return_docstrings(output_type=Seq2SeqModelOutput, config_class=_CONFIG_FOR_DOC)
     def forward(
-        self,
-        input_ids=None,
-        attention_mask=None,
-        decoder_input_ids=None,
-        decoder_attention_mask=None,
-        head_mask=None,
-        decoder_head_mask=None,
-        cross_attn_head_mask=None,
-        encoder_outputs=None,
-        past_key_values=None,
-        inputs_embeds=None,
-        decoder_inputs_embeds=None,
-        use_cache=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
+            self,
+            input_ids=None,
+            attention_mask=None,
+            decoder_input_ids=None,
+            decoder_attention_mask=None,
+            head_mask=None,
+            decoder_head_mask=None,
+            cross_attn_head_mask=None,
+            encoder_outputs=None,
+            past_key_values=None,
+            inputs_embeds=None,
+            decoder_inputs_embeds=None,
+            use_cache=None,
+            output_attentions=None,
+            output_hidden_states=None,
+            return_dict=None,
     ):
         r"""
         Returns:
@@ -1515,23 +1513,23 @@ class T5ForConditionalGeneration(T5PreTrainedModel):
     @add_start_docstrings_to_model_forward(T5_INPUTS_DOCSTRING)
     @replace_return_docstrings(output_type=Seq2SeqLMOutput, config_class=_CONFIG_FOR_DOC)
     def forward(
-        self,
-        input_ids=None,
-        attention_mask=None,
-        decoder_input_ids=None,
-        decoder_attention_mask=None,
-        head_mask=None,
-        decoder_head_mask=None,
-        cross_attn_head_mask=None,
-        encoder_outputs=None,
-        past_key_values=None,
-        inputs_embeds=None,
-        decoder_inputs_embeds=None,
-        labels=None,
-        use_cache=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
+            self,
+            input_ids=None,
+            attention_mask=None,
+            decoder_input_ids=None,
+            decoder_attention_mask=None,
+            head_mask=None,
+            decoder_head_mask=None,
+            cross_attn_head_mask=None,
+            encoder_outputs=None,
+            past_key_values=None,
+            inputs_embeds=None,
+            decoder_inputs_embeds=None,
+            labels=None,
+            use_cache=None,
+            output_attentions=None,
+            output_hidden_states=None,
+            return_dict=None,
     ):
         r"""
         labels (`torch.LongTensor` of shape `(batch_size,)`, *optional*):
@@ -1666,16 +1664,16 @@ class T5ForConditionalGeneration(T5PreTrainedModel):
         )
 
     def prepare_inputs_for_generation(
-        self,
-        input_ids,
-        past=None,
-        attention_mask=None,
-        head_mask=None,
-        decoder_head_mask=None,
-        cross_attn_head_mask=None,
-        use_cache=None,
-        encoder_outputs=None,
-        **kwargs
+            self,
+            input_ids,
+            past=None,
+            attention_mask=None,
+            head_mask=None,
+            decoder_head_mask=None,
+            cross_attn_head_mask=None,
+            use_cache=None,
+            encoder_outputs=None,
+            **kwargs
     ):
 
         # cut decoder_input_ids if past is used
@@ -1720,21 +1718,36 @@ class T5ForConditionalGeneration(T5PreTrainedModel):
             reordered_decoder_past = reordered_decoder_past + (reordered_layer_past_states,)
         return reordered_decoder_past
 
+
 @add_start_docstrings("""T5 Model with `multiple language modeling` heads on top.""", T5_START_DOCSTRING)
 class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
     _keys_to_ignore_on_load_missing = [
         r"encoder\.embed_tokens\.weight",
         r"decoder\.embed_tokens\.weight",
-        r"lm_head\.weight",
-        r"lm_heads[0]\.weight",
-        r"lm_heads[1]\.weight",
-        r"lm_heads[2]\.weight",
-        r"lm_heads[3]\.weight",
-
+        r"lm_head0\.weight",
+        r"lm_head1\.weight",
+        r"lm_head2\.weight",
+        r"lm_head3\.weight",
     ]
     _keys_to_ignore_on_load_unexpected = [
         r"decoder\.block\.0\.layer\.1\.EncDecAttention\.relative_attention_bias\.weight",
     ]
+
+    def get_current_lm_head(self):
+        if self.current_lm_head_idx == 0:
+            self.current_lm_head = self.lm_head0
+            return self.lm_head0
+        elif self.current_lm_head_idx == 1:
+            self.current_lm_head = self.lm_head1
+            return self.lm_head1
+        elif self.current_lm_head_idx == 2:
+            self.current_lm_head = self.lm_head2
+            return self.lm_head2
+        elif self.current_lm_head_idx == 3:
+            self.current_lm_head = self.lm_head3
+            return self.lm_head3
+        else:
+            raise RuntimeError("LM Head not initialized for index: " + str(self.current_lm_head_idx))
 
     def __init__(self, config):
         super().__init__(config)
@@ -1756,10 +1769,12 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
 
         # init lm heads
         self.no_of_lm_heads = 4
-        self.lm_heads = []
-        for i in range(self.no_of_lm_heads):
-            self.lm_heads.append(nn.Linear(config.d_model, config.vocab_size, bias=False))
+        self.lm_head0 = nn.Linear(config.d_model, config.vocab_size, bias=False)
+        self.lm_head1 = nn.Linear(config.d_model, config.vocab_size, bias=False)
+        self.lm_head2 = nn.Linear(config.d_model, config.vocab_size, bias=False)
+        self.lm_head3 = nn.Linear(config.d_model, config.vocab_size, bias=False)
         self.current_lm_head_idx = 0
+        self.current_lm_head = self.get_current_lm_head()
 
         # Initialize weights and apply final processing
         self.post_init()
@@ -1778,8 +1793,7 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
         assert_device_map(self.device_map, len(self.encoder.block))
         self.encoder.parallelize(self.device_map)
         self.decoder.parallelize(self.device_map)
-        for i in range(self.no_of_lm_heads):
-            self.lm_heads[i] = self.lm_heads[i].to(self.decoder.first_device)
+        self.get_current_lm_head().to(self.decoder.first_device)
         self.model_parallel = True
 
     @add_start_docstrings(DEPARALLELIZE_DOCSTRING)
@@ -1788,8 +1802,7 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
         self.decoder.deparallelize()
         self.encoder = self.encoder.to("cpu")
         self.decoder = self.decoder.to("cpu")
-        for i in range(self.no_of_lm_heads):
-            self.lm_heads[i] = self.lm_heads[i].to("cpu")
+        self.get_current_lm_head().to("cpu")
 
         self.model_parallel = False
         self.device_map = None
@@ -1804,10 +1817,11 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
         self.decoder.set_input_embeddings(new_embeddings)
 
     def set_output_embeddings(self, new_embeddings):
-        self.lm_heads[self.current_lm_head_idx] = new_embeddings
+        self.get_current_lm_head()
+        self.current_lm_head = new_embeddings
 
     def get_output_embeddings(self):
-        return self.lm_heads[self.current_lm_head_idx]
+        return self.self.get_current_lm_head()
 
     def get_encoder(self):
         return self.encoder
@@ -1936,15 +1950,16 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
         # Set device for model parallelism
         if self.model_parallel:
             torch.cuda.set_device(self.encoder.first_device)
-            self.lm_head = self.lm_head.to(self.encoder.first_device)
+            self.get_current_lm_head()
+            self.current_lm_head = self.current_lm_head.to(self.encoder.first_device)
             sequence_output = sequence_output.to(self.lm_head.weight.device)
 
         if self.config.tie_word_embeddings:
             # Rescale output before projecting on vocab
             # See https://github.com/tensorflow/mesh/blob/fa19d69eafc9a482aff0b59ddd96b025c0cb207d/mesh_tensorflow/transformer/transformer.py#L586
             sequence_output = sequence_output * (self.model_dim ** -0.5)
-
-        lm_logits = self.lm_heads[self.current_lm_head_idx](sequence_output)
+        self.get_current_lm_head()
+        lm_logits = self.current_lm_head(sequence_output)
 
         loss = None
         if labels is not None:
@@ -2089,14 +2104,14 @@ class T5EncoderModel(T5PreTrainedModel):
     @add_start_docstrings_to_model_forward(T5_ENCODER_INPUTS_DOCSTRING)
     @replace_return_docstrings(output_type=BaseModelOutput, config_class=_CONFIG_FOR_DOC)
     def forward(
-        self,
-        input_ids=None,
-        attention_mask=None,
-        head_mask=None,
-        inputs_embeds=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
+            self,
+            input_ids=None,
+            attention_mask=None,
+            head_mask=None,
+            inputs_embeds=None,
+            output_attentions=None,
+            output_hidden_states=None,
+            return_dict=None,
     ):
         r"""
         Returns:
