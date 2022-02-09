@@ -1821,7 +1821,7 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
         self.current_lm_head = new_embeddings
 
     def get_output_embeddings(self):
-        return self.self.get_current_lm_head()
+        return self.get_current_lm_head()
 
     def get_encoder(self):
         return self.encoder
