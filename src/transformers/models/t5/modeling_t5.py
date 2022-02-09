@@ -1774,7 +1774,7 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
         self.lm_head2 = nn.Linear(config.d_model, config.vocab_size, bias=False)
         self.lm_head3 = nn.Linear(config.d_model, config.vocab_size, bias=False)
         self.current_lm_head_idx = 0
-        self.current_lm_head = self.get_current_lm_head()
+        self.current_lm_head = self.lm_head0
 
         # Initialize weights and apply final processing
         self.post_init()
@@ -1958,7 +1958,7 @@ class T5ForConditionalGenerationWithMultipleHeads(T5PreTrainedModel):
             # Rescale output before projecting on vocab
             # See https://github.com/tensorflow/mesh/blob/fa19d69eafc9a482aff0b59ddd96b025c0cb207d/mesh_tensorflow/transformer/transformer.py#L586
             sequence_output = sequence_output * (self.model_dim ** -0.5)
-        self.get_current_lm_head()
+
         lm_logits = self.current_lm_head(sequence_output)
 
         loss = None
