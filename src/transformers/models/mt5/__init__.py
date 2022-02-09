@@ -48,8 +48,7 @@ _import_structure = {
 
 if is_torch_available():
     _import_structure["modeling_mt5"] = ["MT5EncoderModel", "MT5ForConditionalGeneration",
-                                         "MT5ForConditionalGenerationWithMultipleHeads",
-                                         "MT5WithMultiDecoders", "MT5Model"]
+                                         "MT5ForConditionalGenerationWithMultipleHeads","MT5Model"]
 
 if is_tf_available():
     _import_structure["modeling_tf_mt5"] = ["TFMT5EncoderModel", "TFMT5ForConditionalGeneration", "TFMT5Model"]
@@ -63,7 +62,7 @@ if TYPE_CHECKING:
 
     if is_torch_available():
         from .modeling_mt5 import MT5EncoderModel, MT5ForConditionalGeneration, \
-            MT5ForConditionalGenerationWithMultipleHeads, MT5WithMultiDecoders, \
+            MT5ForConditionalGenerationWithMultipleHeads,\
             MT5Model
 
     if is_tf_available():

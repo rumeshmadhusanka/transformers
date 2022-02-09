@@ -1155,7 +1155,7 @@ if is_torch_available():
             "MPNetPreTrainedModel",
         ]
     )
-    _import_structure["models.mt5"].extend(["MT5EncoderModel", "MT5ForConditionalGeneration", "MT5WithMultiDecoders"
+    _import_structure["models.mt5"].extend(["MT5EncoderModel", "MT5ForConditionalGeneration",
                                             "MT5ForConditionalGenerationWithMultipleHeads" "MT5Model"])
     _import_structure["models.nystromformer"].extend(
         [
@@ -1360,7 +1360,6 @@ if is_torch_available():
             "T5EncoderModel",
             "T5ForConditionalGeneration",
             "T5ForConditionalGenerationWithMultipleHeads",
-            "T5WithMultiDecoders",
             "T5Model",
             "T5PreTrainedModel",
             "load_tf_weights_in_t5",
@@ -1874,7 +1873,7 @@ if is_tf_available():
         ]
     )
     _import_structure["models.mt5"].extend(["TFMT5EncoderModel", "TFMT5ForConditionalGeneration",
-                                            "TFMT5Model"])
+                                            "MT5ForConditionalGenerationWithMultipleHeads", "TFMT5Model"])
     _import_structure["models.openai"].extend(
         [
             "TF_OPENAI_GPT_PRETRAINED_MODEL_ARCHIVE_LIST",
@@ -3190,7 +3189,7 @@ if TYPE_CHECKING:
             MPNetModel,
             MPNetPreTrainedModel,
         )
-        from .models.mt5 import MT5EncoderModel, MT5ForConditionalGeneration, MT5WithMultiDecoders, \
+        from .models.mt5 import MT5EncoderModel, MT5ForConditionalGeneration,\
             MT5ForConditionalGenerationWithMultipleHeads, MT5Model
         from .models.nystromformer import (
             NYSTROMFORMER_PRETRAINED_MODEL_ARCHIVE_LIST,
@@ -3361,7 +3360,6 @@ if TYPE_CHECKING:
             T5EncoderModel,
             T5ForConditionalGeneration,
             T5ForConditionalGenerationWithMultipleHeads,
-            T5WithMultiDecoders,
             T5Model,
             T5PreTrainedModel,
             load_tf_weights_in_t5,
